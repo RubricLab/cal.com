@@ -11,7 +11,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!req.session?.user?.id) {
     return res.status(401).json({ message: "You must be logged in to do this" });
   }
-  console.log("here!", req.session.user.id);
 
   try {
     const alreadyInstalled = await prisma.credential.findFirst({
@@ -29,8 +28,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const event = { note: "Cal AI", expiresAt: null, appId: "cal-ai" };
     const apiKey = await caller.apiKeys.create({ userId: req.session.user.id, event });
-
-    console.log(apiKey);
 
     const installation = await prisma.credential.create({
       data: {
