@@ -2,7 +2,7 @@ import { DynamicStructuredTool } from "langchain/tools";
 import { z } from "zod";
 
 import { env } from "../env.mjs";
-import type EventType from "../types/eventType";
+import type { EventType } from "../types/eventType";
 import { decrypt } from "../utils/encryption";
 
 /**
@@ -15,6 +15,15 @@ export const fetchEventTypes = async ({
   apiKeyHashed: string;
   apiKeyIV: string;
 }) => {
+  // TODO: fix
+  return [
+    {
+      id: 22,
+      length: 15,
+      title: "Quick Chat",
+    },
+  ];
+
   const params = {
     apiKey: decrypt(apiKeyHashed, apiKeyIV),
   };
@@ -28,15 +37,6 @@ export const fetchEventTypes = async ({
   if (response.status === 401) throw new Error("Unauthorized");
 
   const data = await response.json();
-
-  // TODO: fix
-  return [
-    {
-      id: 22,
-      length: 15,
-      title: "Quick Chat",
-    },
-  ];
 
   if (response.status !== 200) {
     return { error: data.message };

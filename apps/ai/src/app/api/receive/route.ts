@@ -83,8 +83,6 @@ export const POST = async (request: NextRequest) => {
     fetchEventTypes({
       apiKeyHashed,
       apiKeyIV,
-      userIdHashed,
-      userIdIV,
     }),
     fetchAvailability({
       apiKeyHashed,
