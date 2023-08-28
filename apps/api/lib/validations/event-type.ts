@@ -148,5 +148,13 @@ export const schemaEventTypeReadPublic = EventType.pick({
     customInputs: customInputSchema.array().optional(),
     link: z.string().optional(),
     bookingFields: eventTypeBookingFields.optional().nullable(),
+
+    // TODO: Implement proper types or remove this. Quick Fixes
+    // offsetStart: z.any().optional().nullable(),
+    // parentId: z.any().optional().nullable(),
+    // requiresBookerEmailVerification: z.any().optional().nullable(),
+    // team: z.any().optional().nullable(),
+    // users: z.any().optional().nullable(),
+    // owner: z.any().optional().nullable(),
   })
 );
