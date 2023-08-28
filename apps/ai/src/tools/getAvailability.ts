@@ -2,6 +2,7 @@ import { DynamicStructuredTool } from "langchain/tools";
 import { z } from "zod";
 
 import { env } from "../env.mjs";
+import type Availability from "../types/Availability";
 import { decrypt } from "../utils/encryption";
 
 /**
@@ -10,14 +11,16 @@ import { decrypt } from "../utils/encryption";
 export const fetchAvailability = async ({
   apiKeyHashed,
   apiKeyIV,
-  userId,
+  userIdHashed,
+  userIdIV,
   dateFrom,
   dateTo,
   eventTypeId,
 }: {
   apiKeyHashed: string;
   apiKeyIV: string;
-  userId: string;
+  userIdHashed: string;
+  userIdIV: string;
   dateFrom: string;
   dateTo: string;
   eventTypeId?: number;
@@ -26,7 +29,7 @@ export const fetchAvailability = async ({
     apiKey: decrypt(apiKeyHashed, apiKeyIV),
     dateFrom,
     dateTo,
-    userId,
+    userId: decrypt(userIdHashed, userIdIV),
   };
 
   if (eventTypeId) params["eventTypeId"] = eventTypeId.toString();
@@ -57,7 +60,7 @@ export const fetchAvailability = async ({
 
 const getAvailabilityTool = new DynamicStructuredTool({
   description: "Get availability within range.",
-  func: async ({ apiKeyHashed, apiKeyIV, userId, dateFrom, dateTo, eventTypeId }) => {
+  func: async ({ apiKeyHashed, apiKeyIV, userIdHashed, userIdIV, dateFrom, dateTo, eventTypeId }) => {
     return JSON.stringify(
       await fetchAvailability({
         apiKeyHashed,
@@ -65,7 +68,8 @@ const getAvailabilityTool = new DynamicStructuredTool({
         dateFrom,
         dateTo,
         eventTypeId,
-        userId,
+        userIdHashed,
+        userIdIV,
       })
     );
   },
@@ -73,6 +77,8 @@ const getAvailabilityTool = new DynamicStructuredTool({
   schema: z.object({
     apiKeyHashed: z.string(),
     apiKeyIV: z.string(),
+    userIdHashed: z.string(),
+    userIdIV: z.string(),
     dateFrom: z.string(),
     dateTo: z.string(),
     eventTypeId: z
@@ -81,7 +87,6 @@ const getAvailabilityTool = new DynamicStructuredTool({
       .describe(
         "The ID of the event type to filter availability for if you've called getEventTypes, otherwise do not include."
       ),
-    userId: z.string(),
   }),
 });
 

@@ -9,16 +9,13 @@ import { decrypt } from "../utils/encryption";
  * Fetches event types by user ID.
  */
 export const fetchEventTypes = async ({
-  userId,
   apiKeyHashed,
   apiKeyIV,
 }: {
-  userId: string;
   apiKeyHashed: string;
   apiKeyIV: string;
 }) => {
   const params = {
-    userId,
     apiKey: decrypt(apiKeyHashed, apiKeyIV),
   };
 
@@ -54,14 +51,15 @@ export const fetchEventTypes = async ({
 
 const getEventTypesTool = new DynamicStructuredTool({
   description: "Get the user's event type IDs. Usually necessary to book a meeting.",
-  func: async ({ apiKeyHashed, apiKeyIV, userId }) => {
-    return JSON.stringify(await fetchEventTypes({ apiKeyHashed, apiKeyIV, userId }));
+  func: async ({ apiKeyHashed, apiKeyIV }) => {
+    return JSON.stringify(await fetchEventTypes({ apiKeyHashed, apiKeyIV }));
   },
   name: "getEventTypes",
   schema: z.object({
     apiKeyHashed: z.string(),
     apiKeyIV: z.string(),
-    userId: z.string(),
+    userIdHashed: z.string(),
+    userIdIV: z.string(),
   }),
 });
 
